@@ -1,0 +1,29 @@
+
+name: Health Check
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tcp-health-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          # Follow any specific setup here for the project
+          npm install  # or pip install -r requirements.txt
+
+      - name: Run application
+        run: |
+          # Run the application to make it listen on the TCP health port
+          npm start &  # Example command
+          sleep 5  # Wait for the application to initialize
+
+      - name: TCP Health Check
+        run: |
+          timeout 5 bash -c "</dev/tcp/localhost/8000" && echo 'TCP port is open' || echo 'TCP port is closed'
